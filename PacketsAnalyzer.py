@@ -16,12 +16,16 @@
 ################################################################################
 #         1 # 01/11/17 # W.Winterhalter         # Creation of the file         #
 ################################################################################
+#         2 # 05/11/17 # W.Winterhalter         # Add draw_graph()             #
+#           #          #                        #  - nodes = Ip sources & dest.#
+#           #          #                        #  - labels = Protocol         #
+################################################################################
 
 #Imports
 import sys, os
 sys.path.append(os.getcwd() + '\\Documents\\GitHub\\NetworkMappingProject')
 
-import packet
+import packet, Networkx as nx
 
 #Wireshark plain text file opening (working folder)
 capture = open('CaptureWireshark.txt','r')
@@ -42,11 +46,20 @@ with capture:
             Packet_List.append(P)
         elif("Internet Protocol Version 4" in tmp[0]):
             src = tmp[1][6:len(tmp[1])]
-            dst = tmp[2][6:len(tmp[2])]
+            dst = tmp[2][6:len(tmp[2])-1]
             protocol_line = True
 
+graph = []
+labels = []
+
 for i in range(len(Packet_List)):
-    Packet_List[i].Display()
+    cp = Packet_List[i]
+    #cp.Display()
+    if((cp.getIpSrc(), cp.getIpDst()) not in graph):
+        graph.append((cp.getIpSrc(), cp.getIpDst()))
+        labels.append(cp.getProtocol())
+
+nx.draw_graph(graph, labels, 'shell', 1600, 'red')
 
 #Close the Capture File
 capture.close()
