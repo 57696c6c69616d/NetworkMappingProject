@@ -16,6 +16,8 @@
 ################################################################################
 #         1 # 01/11/17 # W.Winterhalter         # Creation of the file         #
 ################################################################################
+#         2 # 06/11/17 # W.Winterhalter         # Add setProtocol method       #
+################################################################################
 
 class packet:
     
@@ -32,6 +34,9 @@ class packet:
         
     def getIpDst(self):
         return self.__ip_dst
+
+    def setProtocol(self, protocol):
+        self.__protocol = protocol
         
     def Display(self):
         print('Protocol: ' + self.__protocol)
