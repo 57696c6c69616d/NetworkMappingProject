@@ -1,0 +1,22 @@
+{% extends "layout.html.twig" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<main role="main" class="container">
+	<!-- Affiche Adresse IP -->
+	<div align = "center"> 
+		Votre IP locale est {{localIP}}.
+	</div>
+	<div class="jumbotron">
+		<div align = "center"> 
+			<h1>Les graphes</h1>
+			<p class="lead">Voici les différents exemples de graphes disponibles pour visualiser votre réseau local.</p>
+			<p>Ce site étant en développement, vous devez d'abord faire une capture wireshark sur votre poste et l'enregistrer en fichier texte en le nommant "Capture.txt".</p>
+			<a href="{{path('graph')}}" > Graph mouvable </a>
+		</div>
+	</div>
+</main>
+
+{% endblock %}
