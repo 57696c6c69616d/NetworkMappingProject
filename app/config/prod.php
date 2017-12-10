@@ -6,9 +6,9 @@ $app['db.options'] = array(
     'charset'  => 'utf8',
     'host'     => 'localhost',
     'port'     => '3306',
-    'dbname'   => 'microcms',
-    'user'     => 'microcms_user',
-    'password' => 'microcms_pwd',
+    'dbname'   => 'nmpdb',
+    'user'     => 'nmp_user',
+    'password' => 'nmp_pa55',
 );
 
 // define log level

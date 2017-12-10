@@ -15,3 +15,9 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 $app->register(new Silex\Provider\AssetServiceProvider(), array(
     'assets.version' => 'v1'
 ));
+$app->register(new Silex\Provider\DoctrineServiceProvider());
+
+// Register services.
+$app['dao.packet'] = function ($app) {
+    return new NMP\DAO\PacketDAO($app['db']);
+};

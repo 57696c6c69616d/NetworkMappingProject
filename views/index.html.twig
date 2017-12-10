@@ -2,6 +2,21 @@
 
 {% block title %}Home{% endblock %}
 
+
+{% block button %}
+
+<button id="button1" class="button button1" onclick="Start()">Start Capturing</button>
+
+<script>
+	function Start(){
+		w = window.open("../engine/index.php", "_blank");
+		document.getElementById("button1").innerHTML = "Capturing...";
+		w.close();
+	}
+</script>
+
+{% endblock %}
+
 {% block content %}
 
 <main role="main" class="container">

@@ -5,20 +5,13 @@
 }
 
 .node text {
-  font: 10px sans-serif;
   pointer-events: none;
-  text-anchor: middle;
-}
-
-line.link {
-  fill: none;
-  stroke: #9ecae1;
-  stroke-width: 1.5px;
+  font: 10px sans-serif;
 }
 
 .links line {
-  stroke: #999;
   stroke-opacity: 0.6;
+  background-color: black;
 }
 
 h1 {
@@ -36,4 +29,13 @@ body {
     padding-top: 80px;
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     line-height: 1.5;
+}
+
+.button1 {
+  padding: 10px;
+  position:absolute;
+  top:0;
+  right:0;
+  margin-top: 4px;
+  margin-right: 4px;
 }
