@@ -47,11 +47,11 @@ d3.json("../cap/cap.json", function(error, graph) {
     .data(graph.nodes)
     .enter()
     .append("image")
-  	  .attr("xlink:href", "http://localhost/NMP/web/images/Computer-Icon.png")
+  	  .attr("xlink:href", "{{ asset('/images/Computer-Icon.png') }}")
   	  .attr("x", -8)
       .attr("y", -8)
-      .attr("height", 30)
-      .attr("width", 30)
+      .attr("height", 20)
+      .attr("width", 20)
     .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -75,10 +75,10 @@ d3.json("../cap/cap.json", function(error, graph) {
 
   function ticked() {
     link
-        .attr("x1", function(d) { return d.source.x+15; })
-        .attr("y1", function(d) { return d.source.y+15; })
-        .attr("x2", function(d) { return d.target.x+15; })
-        .attr("y2", function(d) { return d.target.y+15; });
+        .attr("x1", function(d) { return d.source.x+10; })
+        .attr("y1", function(d) { return d.source.y+10; })
+        .attr("x2", function(d) { return d.target.x+10; })
+        .attr("y2", function(d) { return d.target.y+10; });
 
     node
         .attr("cx", function(d) { return d.x; })
@@ -89,8 +89,8 @@ d3.json("../cap/cap.json", function(error, graph) {
         .attr("y", function(d) { return d.y; });
 
     svg.selectAll("text")
-        .attr("x", function(d) { return d.x-25; })
-        .attr("y", function(d) { return d.y+40; });
+        .attr("x", function(d) { return d.x-20; })
+        .attr("y", function(d) { return d.y+25; });
   }
 });
 
