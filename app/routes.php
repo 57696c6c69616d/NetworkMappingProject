@@ -22,6 +22,10 @@ $app->get('/graph', function () use ($app) {
 
 	$percentage = ((int)$nbUDPPackets / (int)$nbPackets)*100;
 
+	$first_date = $app['dao.packet']->FirstDate()['date'];
+
+	$last_date = $app['dao.packet']->LastDate()['date'];
+
 	$file = fopen('..\cap\cap.json', 'w+');
 	$json = '{"nodes": ';
 	if (fwrite($file, $json) === false) { 
@@ -46,5 +50,5 @@ $app->get('/graph', function () use ($app) {
 		echo "Cannot write to text file. <br />"; 
 	}
 
-    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage));
+    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage, 'first_date' => $first_date, 'last_date' => $last_date));
 })->bind('graph');

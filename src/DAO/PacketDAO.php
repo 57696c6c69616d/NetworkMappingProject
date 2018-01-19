@@ -64,6 +64,20 @@ class PacketDAO extends DAO
         return $result[0];
     }
 
+    public function FirstDate(){
+        $sql = "SELECT date FROM t_packets LIMIT 1";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
+    public function LastDate(){
+        $sql = "SELECT date FROM t_packets ORDER BY id DESC LIMIT 1";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
     protected function buildDomainObject(array $row) {
         $packet = new Packet();
         $packet->setId($row['id']);

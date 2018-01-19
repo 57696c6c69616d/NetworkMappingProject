@@ -12,7 +12,8 @@ create table t_packets (
     target varchar(15) not null,
     mac_dst varchar(17) not null,
     port_dst varchar(5),
-    value Integer(11) DEFAULT 1 not null
+    value Integer(11) DEFAULT 1 not null,
+    date Date() DEFAULT CURRENT_TIMESTAMP not null
 ) engine=innodb character set utf8 collate utf8_unicode_ci;
 
 create table t_address (
