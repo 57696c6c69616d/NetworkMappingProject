@@ -14,7 +14,7 @@ class PacketDAO extends DAO
     }
 
     public function findAll() {
-        $sql = "SELECT source,target,value FROM t_packets";
+        $sql = "SELECT source,mac_src,port_src,prtcl_hl,prtcl_tl,target,mac_dst,port_dst,value FROM t_packets";
         $result = $this->getDb()->fetchAll($sql);
 
         // Convert query result to an array of domain objects
@@ -45,6 +45,20 @@ class PacketDAO extends DAO
 
     public function NumberOfPackets(){
         $sql = "SELECT COUNT(*) FROM t_packets";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
+    public function NumberOfTCPPackets(){
+        $sql = "SELECT COUNT(prtcl_tl) FROM t_packets WHERE prtcl_tl='TCP'";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
+    public function NumberOfUDPPackets(){
+        $sql = "SELECT COUNT(prtcl_tl) FROM t_packets WHERE prtcl_tl='UDP'";
         $result = $this->getDb()->fetchAll($sql);
 
         return $result[0];

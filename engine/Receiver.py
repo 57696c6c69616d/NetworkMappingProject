@@ -6,7 +6,7 @@ from thread import *
 #Attention aux interfaces liees aux vms
 TCP_IP = '192.168.1.32' #socket.gethostbyname(socket.gethostname())
 TCP_PORT = 5005
-BUFFER_SIZE = 55
+BUFFER_SIZE = 89
 
 #Connection to the Database
 sql_conn = mysql.connector.connect(host="localhost",user="nmp_user",password="nmp_pa55", database="nmpdb")
@@ -36,13 +36,13 @@ def clientthread(conn):
         cursor.execute(query)
         sql_conn.commit()
 
-        ip_dst = data[4]
+        ip_dst = data[5]
         query = ("INSERT IGNORE INTO nmpdb.t_address (ip) VALUES ('" + ip_dst + "');")
         cursor.execute(query)
         sql_conn.commit()
 
-        d = (ip_src, data[1], data[2], data[3], ip_dst, data[5])
-        query = ("INSERT INTO nmpdb.t_packets (source, port_src, prtcl_hl, prtcl_tl, target, port_dst) VALUES (%s, %s, %s, %s, %s, %s);")
+        d = (ip_src, data[1], data[2], data[3], data[4], ip_dst, data[6], data[7])
+        query = ("INSERT INTO nmpdb.t_packets (source, mac_src, port_src, prtcl_hl, prtcl_tl, target, mac_dst, port_dst) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);")
         cursor.execute(query, d)
         sql_conn.commit()
 

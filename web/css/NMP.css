@@ -48,6 +48,31 @@ table{
   display: none;
 }
 
+.type0{
+  background-color: white;
+}
+
+.type1{
+  background-color: gainsboro;
+}
+
+.diagram {
+  width: 100px;
+  height: 100px;
+  transform: rotate(-90deg);
+  background: blue;
+  border-radius: 50%;
+  margin-top: 20px;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+#circle1 {
+  fill: blue;
+  stroke: orange;
+  stroke-width: 31;
+}
+
 footer{
   margin-top: 20px;
   margin-bottom: 10px;

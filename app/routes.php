@@ -16,6 +16,12 @@ $app->get('/graph', function () use ($app) {
 
 	$nbPackets = $app['dao.packet']->NumberOfPackets()['COUNT(*)'];
 
+	$nbTCPPackets = $app['dao.packet']->NumberOfTCPPackets()['COUNT(prtcl_tl)'];
+
+	$nbUDPPackets = $app['dao.packet']->NumberOfUDPPackets()['COUNT(prtcl_tl)'];
+
+	$percentage = ((int)$nbUDPPackets / (int)$nbPackets)*100;
+
 	$file = fopen('..\cap\cap.json', 'w+');
 	$json = '{"nodes": ';
 	if (fwrite($file, $json) === false) { 
@@ -40,5 +46,5 @@ $app->get('/graph', function () use ($app) {
 		echo "Cannot write to text file. <br />"; 
 	}
 
-    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets));
+    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage));
 })->bind('graph');

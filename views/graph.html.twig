@@ -19,7 +19,7 @@
 </div>
 
 <div class="tab-content" align="center">
-	<div class="tab-pane" id="graph">
+	<div class="tab-pane active" id="graph">
 		<svg width="960" height="600"></svg>
 	</div>
 
@@ -34,16 +34,37 @@
                 </thead>
                 <tbody>
 	                <tr id="line"/>
-	                <tr>
+	                <tr class="type0">
 	                	<td>Nodes</td>
 	                	<td>{{nbIP}}</td>
 	                </tr>
-	                <tr>
+	                <tr class="type1">
+	                	<td>TCP Requests</td>
+	                	<td>{{nbTCPPackets}}</td>
+	                </tr>
+	                <tr class="type0">
+	                	<td>UDP Requests</td>
+	                	<td>{{nbUDPPackets}}</td>
+	                </tr>
+	                <tr class="type1">
 	                	<td>Packets Captured</td>
 	                	<td>{{nbPackets}}</td>
 	                </tr>
 	            </tbody>
             </table>
+            <svg class="diagram" viewBox="0 0 32 32">
+  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100" />
+			</svg>
+			<div class="legend">
+				<svg width="20px" height="20px">
+					<circle fill="blue" r="5" cx="10" cy="15" />
+				</svg>
+				<span>TCP</span>
+				<svg width="20px" height="20px">
+					<circle fill="orange" r="5" cx="10" cy="15" />
+				</svg>
+				<span>UDP</span>
+			</div>
         </div>
 	</div>
 </div>
@@ -54,13 +75,17 @@
 			<tr>
 				<th>IP Source</th>
 				<th width="30px"/>
-				<th>Port Source</th>
+				<th>Mac Address</th>
 				<th width="30px"/>
-				<th>Protocol</th>
+				<th>Ports Source</th>
+				<th width="30px"/>
+				<th>Protocols</th>
 				<th width="30px"/>
 				<th>IP Destination</th>
 				<th width="30px" max-width="30px"/>
-				<th>Port Destination</th>
+				<th>Mac Address</th>
+				<th width="30px"/>
+				<th>Ports Destination</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -68,11 +93,15 @@
 			<tr>
 				<td id="ip_src"></td>
 				<td/>
+				<td id="mac_src"></td>
+				<td/>
 				<td id="port_src"></td>
 				<td/>
-				<td id="protocol"></td>
+				<td id="protocols"></td>
 				<td/>
 				<td id="ip_dst"></td>
+				<td/>
+				<td id="mac_dst"></td>
 				<td/>
 				<td id="port_dst"></td>
 			</tr>
@@ -104,7 +133,13 @@ d3.json("../cap/cap.json", function(error, graph) {
       .attr("stroke-width", function(d) { return Math.log(d.value)+1; })
       .attr("stroke", function(d) { return color(d.value); })
       .attr("class", function(d) { return d.source; })
-      .attr("value", function(d) { return d.target; });
+      .attr("mac_src", function(d) { return d.mac_src; })
+      .attr("port_src", function(d) { return d.port_src; })
+      .attr("target", function(d) { return d.target; })
+      .attr("mac_dst", function(d) { return d.mac_dst; })
+      .attr("port_dst", function(d) { return d.port_dst; })
+      .attr("prtcl_hl", function(d) { return d.prtcl_hl; })
+      .attr("prtcl_tl", function(d) { return d.prtcl_tl; });
 
   var node = svg.append("g")
       .attr("class", "nodes")
@@ -191,18 +226,70 @@ function show(ip_src){
 	document.getElementById("ip_src").innerHTML = ip_src;
 
 	var tmp = document.getElementsByClassName(ip_src);
-	var tmp2 = "";
-	var L = [];
+	var target = "";
+	var mac_src = "";
+	var mac_dst = "";
+	var port_src = "";
+	var port_dst = "";
+	var prtcls = "";
+	var L_target = [];
+	var L_mac_src = [];
+	var L_mac_dst = [];
+	var L_port_src = [];
+	var L_port_dst = [];
+	var L_prtcls = [];
 	for(var i = 0; i < tmp.length; i++)
 	{
-		var v = tmp[i].getAttribute("value");
-		if(L.indexOf(v) < 0 )
+		var v = tmp[i].getAttribute("target");
+		if(L_target.indexOf(v) < 0 )
 		{
-			L.push(v);
-			tmp2 += v + "</br>";
+			L_target.push(v);
+			target += v + "</br>";
 		}
+		var v = tmp[i].getAttribute("mac_src");
+		if(L_mac_src.indexOf(v) < 0 )
+		{
+			L_mac_src.push(v);
+			mac_src += v + "</br>";
+		}
+		var v = tmp[i].getAttribute("mac_dst");
+		if(L_mac_dst.indexOf(v) < 0 )
+		{
+			L_mac_dst.push(v);
+			mac_dst += v + "</br>";
+		}
+		var v = tmp[i].getAttribute("port_src");
+		if(L_port_src.indexOf(v) < 0 )
+		{
+			L_port_src.push(v);
+			port_src += v + "</br>";
+		}
+		var v = tmp[i].getAttribute("port_dst");
+		if(L_port_dst.indexOf(v) < 0 )
+		{
+			L_port_dst.push(v);
+			port_dst += v + "</br>";
+		}
+		var v = tmp[i].getAttribute("prtcl_hl");
+		if(L_prtcls.indexOf(v) < 0 )
+		{
+			L_prtcls.push(v);
+			prtcls += "<p>" + v;
+		}
+		var v = tmp[i].getAttribute("prtcl_tl");
+		if(L_prtcls.indexOf(v) < 0 )
+		{
+			L_prtcls.push(v);
+			prtcls += "/" + v;
+		}
+		prtcls += "</p>";
 	}
-	document.getElementById('ip_dst').innerHTML = tmp2;
+	document.getElementById('ip_dst').innerHTML = target;
+	document.getElementById('mac_src').innerHTML = mac_src;
+	document.getElementById('mac_dst').innerHTML = mac_dst;
+	document.getElementById('port_src').innerHTML = port_src;
+	document.getElementById('port_dst').innerHTML = port_dst;
+	document.getElementById('protocols').innerHTML = prtcls;
 }
 
 function hide(){
