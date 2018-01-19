@@ -10,12 +10,16 @@ $app->get('/', function () use ($app) {
 
 // Graph page
 $app->get('/graph', function () use ($app) {
-	$localIP = getHostByName(getHostName());
+	$localIP = $_SERVER['REMOTE_ADDR'];
+
+	$nbIP = $app['dao.packet']->NumberOfIp()['COUNT(ip)'];
+
+	$nbPackets = $app['dao.packet']->NumberOfPackets()['COUNT(*)'];
 
 	$file = fopen('..\cap\cap.json', 'w+');
 	$json = '{"nodes": ';
 	if (fwrite($file, $json) === false) { 
-		echo "Cannot write to text file. <br />"; 
+		echo "Cannot write to text file. <br />";
 	}
 
 	$data = $app['dao.packet']->ListAllIp();
@@ -36,5 +40,5 @@ $app->get('/graph', function () use ($app) {
 		echo "Cannot write to text file. <br />"; 
 	}
 
-    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP));
+    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets));
 })->bind('graph');

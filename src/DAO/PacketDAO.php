@@ -36,6 +36,20 @@ class PacketDAO extends DAO
             throw new \Exception("No packet matching ip " . $ip);
     }
 
+    public function NumberOfIp(){
+        $sql = "SELECT DISTINCT COUNT(ip) FROM t_address";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
+    public function NumberOfPackets(){
+        $sql = "SELECT COUNT(*) FROM t_packets";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
     protected function buildDomainObject(array $row) {
         $packet = new Packet();
         $packet->setId($row['id']);

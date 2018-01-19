@@ -31,3 +31,25 @@ body {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     line-height: 1.5;
 }
+
+.row{
+  margin-top: 10px;
+}
+
+table{
+   width: 960px;
+}
+
+#line {
+    border: 1px solid grey;
+}
+
+#details{
+  display: none;
+}
+
+footer{
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+}

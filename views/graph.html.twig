@@ -9,8 +9,77 @@
 	Votre IP locale est {{localIP}}.
 </div>
 
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a href="#graph" data-toggle="tab">Graph</a></li>
+            <li><a href="#stats" data-toggle="tab" onclick="hide();">Statistics</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="tab-content" align="center">
+	<div class="tab-pane" id="graph">
+		<svg width="960" height="600"></svg>
+	</div>
+
+	<div class="tab-pane" id="stats">
+		<div class="table table-responsive">
+            <table class="table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Object</th>
+                        <th>Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+	                <tr id="line"/>
+	                <tr>
+	                	<td>Nodes</td>
+	                	<td>{{nbIP}}</td>
+	                </tr>
+	                <tr>
+	                	<td>Packets Captured</td>
+	                	<td>{{nbPackets}}</td>
+	                </tr>
+	            </tbody>
+            </table>
+        </div>
+	</div>
+</div>
+
 <div align="center">
-<svg width="960" height="600"></svg>
+	<table id="details" class"table-hover table-condensed">
+		<thead>
+			<tr>
+				<th>IP Source</th>
+				<th width="30px"/>
+				<th>Port Source</th>
+				<th width="30px"/>
+				<th>Protocol</th>
+				<th width="30px"/>
+				<th>IP Destination</th>
+				<th width="30px" max-width="30px"/>
+				<th>Port Destination</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="line"/>
+			<tr>
+				<td id="ip_src"></td>
+				<td/>
+				<td id="port_src"></td>
+				<td/>
+				<td id="protocol"></td>
+				<td/>
+				<td id="ip_dst"></td>
+				<td/>
+				<td id="port_dst"></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
 <script type="text/javascript">
 
 var svg = d3.select("svg"),
@@ -33,7 +102,9 @@ d3.json("../cap/cap.json", function(error, graph) {
     .data(graph.links)
     .enter().append("line")
       .attr("stroke-width", function(d) { return Math.log(d.value)+1; })
-      .attr("stroke", function(d) { return color(d.value); });
+      .attr("stroke", function(d) { return color(d.value); })
+      .attr("class", function(d) { return d.source; })
+      .attr("value", function(d) { return d.target; });
 
   var node = svg.append("g")
       .attr("class", "nodes")
@@ -52,6 +123,8 @@ d3.json("../cap/cap.json", function(error, graph) {
       .attr("y", -8)
       .attr("height", 20)
       .attr("width", 20)
+      .attr("id", function(d) { return d.ip; })
+      .attr("onclick", "show(this.id);")
     .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -111,7 +184,30 @@ function dragended(d) {
   d.fy = null;
 }
 
+function show(ip_src){
+	if(document.getElementById("details").style.display == 'none'){
+		document.getElementById("details").style.display = 'inline';
+	}
+	document.getElementById("ip_src").innerHTML = ip_src;
+
+	var tmp = document.getElementsByClassName(ip_src);
+	var tmp2 = "";
+	var L = [];
+	for(var i = 0; i < tmp.length; i++)
+	{
+		var v = tmp[i].getAttribute("value");
+		if(L.indexOf(v) < 0 )
+		{
+			L.push(v);
+			tmp2 += v + "</br>";
+		}
+	}
+	document.getElementById('ip_dst').innerHTML = tmp2;
+}
+
+function hide(){
+	document.getElementById("details").style.display = 'none';
+}
 </script>
-</div>
 
 {% endblock %}
