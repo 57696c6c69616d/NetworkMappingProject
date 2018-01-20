@@ -139,8 +139,14 @@ d3.json("../cap/cap.json", function(error, graph) {
     .data(graph.links)
     .enter().append("line")
       .attr("stroke-width", function(d) { return Math.log(d.value)+1; })
-      .attr("stroke", function(d) { return color(d.value); })
-      .attr("class", function(d) { return d.source; })
+      .attr("stroke", function(d) { return color(d.value); });
+
+  var info = svg.append("g")
+  	  .attr("class", "info")
+  	.selectAll("info")
+  	.data(graph.info)
+  	.enter().append("info")
+  	  .attr("class", function(d) { return d.source; })
       .attr("mac_src", function(d) { return d.mac_src; })
       .attr("port_src", function(d) { return d.port_src; })
       .attr("target", function(d) { return d.target; })

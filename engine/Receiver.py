@@ -31,17 +31,8 @@ def clientthread(conn):
         
         #Sending Data to the Database
         data = data.split(',')
-        ip_src = data[0]
-        query = ("INSERT IGNORE INTO nmpdb.t_address (ip) VALUES ('" + ip_src + "');")
-        cursor.execute(query)
-        sql_conn.commit()
 
-        ip_dst = data[5]
-        query = ("INSERT IGNORE INTO nmpdb.t_address (ip) VALUES ('" + ip_dst + "');")
-        cursor.execute(query)
-        sql_conn.commit()
-
-        d = (ip_src, data[1], data[2], data[3], data[4], ip_dst, data[6], data[7])
+        d = (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7])
         query = ("INSERT INTO nmpdb.t_packets (source, mac_src, port_src, prtcl_hl, prtcl_tl, target, mac_dst, port_dst) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);")
         cursor.execute(query, d)
         sql_conn.commit()

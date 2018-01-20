@@ -1,4 +1,4 @@
-insert into t_protocol values (0, 'HOPOPT');
+/*insert into t_protocol values (0, 'HOPOPT');
 insert into t_protocol values (1, 'ICMP');
 insert into t_protocol values (2, 'IGMP');
 insert into t_protocol values (3, 'GGP');
@@ -253,4 +253,4 @@ insert into t_protocol values (251, '');
 insert into t_protocol values (252, '');
 insert into t_protocol values (253, '');
 insert into t_protocol values (254, '');
-insert into t_protocol values (255, 'Reserved');
+insert into t_protocol values (255, 'Reserved');*/

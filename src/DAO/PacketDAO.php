@@ -14,15 +14,16 @@ class PacketDAO extends DAO
     }
 
     public function findAll() {
-        $sql = "SELECT source,mac_src,port_src,prtcl_hl,prtcl_tl,target,mac_dst,port_dst,value FROM t_packets";
+        $sql = "SELECT source,target,value FROM t_links";
         $result = $this->getDb()->fetchAll($sql);
 
-        // Convert query result to an array of domain objects
-        // $packets = array();
-        // foreach ($result as $row) {
-        //     $packetId = $row['id'];
-        //     $packets[$packetId] = $this->buildDomainObject($row);
-        // }
+        return $result;
+    }
+
+    public function getInfo() {
+        $sql = "SELECT source,mac_src,port_src,prtcl_hl,prtcl_tl,target,mac_dst,port_dst FROM t_packets";
+        $result = $this->getDb()->fetchAll($sql);
+
         return $result;
     }
 	
@@ -65,14 +66,14 @@ class PacketDAO extends DAO
     }
 
     public function FirstDate(){
-        $sql = "SELECT date FROM t_packets LIMIT 1";
+        $sql = "SELECT _date FROM t_packets LIMIT 1";
         $result = $this->getDb()->fetchAll($sql);
 
         return $result[0];
     }
 
     public function LastDate(){
-        $sql = "SELECT date FROM t_packets ORDER BY id DESC LIMIT 1";
+        $sql = "SELECT _date FROM t_packets ORDER BY id DESC LIMIT 1";
         $result = $this->getDb()->fetchAll($sql);
 
         return $result[0];

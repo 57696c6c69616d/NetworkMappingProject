@@ -22,9 +22,9 @@ $app->get('/graph', function () use ($app) {
 
 	$percentage = ((int)$nbUDPPackets / (int)$nbPackets)*100;
 
-	$first_date = $app['dao.packet']->FirstDate()['date'];
+	$first_date = $app['dao.packet']->FirstDate()['_date'];
 
-	$last_date = $app['dao.packet']->LastDate()['date'];
+	$last_date = $app['dao.packet']->LastDate()['_date'];
 
 	$file = fopen('..\cap\cap.json', 'w+');
 	$json = '{"nodes": ';
@@ -42,6 +42,15 @@ $app->get('/graph', function () use ($app) {
 	}
 	
 	$data = $app['dao.packet']->findAll();
+	$json = json_encode($data, JSON_NUMERIC_CHECK);
+	if (fwrite($file, $json) === false) { 
+		echo "Cannot write to text file. <br />"; 
+	}
+	if (fwrite($file, ', "info": ') === false) { 
+		echo "Cannot write to text file. <br />"; 
+	}
+
+	$data = $app['dao.packet']->getInfo();
 	$json = json_encode($data, JSON_NUMERIC_CHECK);
 	if (fwrite($file, $json) === false) { 
 		echo "Cannot write to text file. <br />"; 
