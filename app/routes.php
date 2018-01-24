@@ -1,18 +1,22 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
+use NMP\Domain\Packet;
+use NMP\Domain\Machine;
+use NMP\Form\Type\MachineType;
 
 // Home page
 $app->get('/', function () use ($app) {
-	$localIP = getHostByName(getHostName());
+	$localIP = $_SERVER['REMOTE_ADDR'];
     return $app['twig']->render('index.html.twig', array('localIP' => $localIP));
 })->bind('home');
 
 // Graph page
-$app->get('/graph', function () use ($app) {
+$app->match('/graph', function(Request $request) use ($app) {
 	$localIP = $_SERVER['REMOTE_ADDR'];
 
-	$nbIP = $app['dao.packet']->NumberOfIp()['COUNT(ip)'];
+	#Statistics
+	$nbIP = $app['dao.machine']->NumberOfMachines()['COUNT(ip)'];
 
 	$nbPackets = $app['dao.packet']->NumberOfPackets()['COUNT(*)'];
 
@@ -26,13 +30,14 @@ $app->get('/graph', function () use ($app) {
 
 	$last_date = $app['dao.packet']->LastDate()['_date'];
 
-	$file = fopen('..\cap\cap.json', 'w+');
+	#Graph
+	$file = fopen('cap\cap.json', 'w+');
 	$json = '{"nodes": ';
 	if (fwrite($file, $json) === false) { 
 		echo "Cannot write to text file. <br />";
 	}
 
-	$data = $app['dao.packet']->ListAllIp();
+	$data = $app['dao.machine']->findAll();
 	$json = json_encode($data);
 	if (fwrite($file, $json) === false) { 
 		echo "Cannot write to text file. <br />"; 
@@ -59,5 +64,14 @@ $app->get('/graph', function () use ($app) {
 		echo "Cannot write to text file. <br />"; 
 	}
 
-    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage, 'first_date' => $first_date, 'last_date' => $last_date));
+	#Customize
+	$machine = new Machine();
+	$machineForm = $app['form.factory']->create(MachineType::class, $machine);
+	$machineForm->handleRequest($request);
+	if ($machineForm->isSubmitted() && $machineForm->isValid()) {
+		$app['dao.machine']->save($machine);
+		$app['session']->getFlashBag()->add('success', 'Parameters successfully submitted.');
+	}
+
+    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage, 'first_date' => $first_date, 'last_date' => $last_date, 'machineForm' => $machineForm->createView()));
 })->bind('graph');

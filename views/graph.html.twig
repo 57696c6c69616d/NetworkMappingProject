@@ -13,6 +13,7 @@
     <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <ul class="nav nav-tabs nav-justified">
             <li class="active"><a href="#graph" data-toggle="tab">Graph</a></li>
+            <li><a href="#customize" data-toggle="tab" onclick="hide();">Customize</a></li>
             <li><a href="#stats" data-toggle="tab" onclick="hide();">Statistics</a></li>
         </ul>
     </div>
@@ -20,7 +21,46 @@
 
 <div class="tab-content" align="center">
 	<div class="tab-pane active" id="graph">
-		<svg width="960" height="600"></svg>
+		<svg width="960" height="600"></svg><br/>
+		<image src="{{ asset('/images/U.png') }}" height="20px" width="20px"> Unknown </image>
+		<image src="{{ asset('/images/C.png') }}" height="20px" width="20px"> Client </image>
+		<image src="{{ asset('/images/F.png') }}" height="20px" width="20px"> Firewall </image>
+		<image src="{{ asset('/images/R.png') }}" height="20px" width="20px"> Router </image>
+		<image src="{{ asset('/images/S.png') }}" height="20px" width="20px"> Server </image>
+	</div>
+
+	<div class="tab-pane" id="customize">
+	{% if machineForm %}
+        {{ form_start(machineForm) }}
+			<div class="form-group">
+				<div>IP Address : 
+					{{ form_errors(machineForm.ip) }}
+					{{ form_widget(machineForm.ip, { 'attr':  {
+						'placeholder': 'ex: 192.168.1.1',
+						'value': ''
+					}}) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div>Type :
+					{{ form_errors(machineForm.type) }}
+					{{ form_widget(machineForm.type, { 'attr':  {
+						'rows': '1'
+					}}) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div>
+	            	<input type="submit" class="btn btn-primary" value="Submit" />
+	            </div>
+	        </div>
+	    {{ form_end(machineForm) }}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+    {% endif %}
 	</div>
 
 	<div class="tab-pane" id="stats">
@@ -78,7 +118,7 @@
 </div>
 
 <div align="center">
-	<table id="details" class"table-hover table-condensed">
+	<table id="details" class="table-hover table-condensed">
 		<thead>
 			<tr>
 				<th>IP Source</th>
@@ -130,7 +170,7 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-d3.json("../cap/cap.json", function(error, graph) {
+d3.json("cap/cap.json", function(error, graph) {
   if (error) throw error;
 
   var link = svg.append("g")
@@ -167,7 +207,7 @@ d3.json("../cap/cap.json", function(error, graph) {
     .data(graph.nodes)
     .enter()
     .append("image")
-  	  .attr("xlink:href", "{{ asset('/images/Computer-Icon.png') }}")
+  	  .attr("xlink:href", function(d) { return image(d.type); })
   	  .attr("x", -8)
       .attr("y", -8)
       .attr("height", 20)
@@ -308,6 +348,22 @@ function show(ip_src){
 
 function hide(){
 	document.getElementById("details").style.display = 'none';
+}
+
+function image(type){
+	if(type == 'C'){
+		return "{{ asset('/images/C.png') }}";
+	}
+	if(type == 'S'){
+		return "{{ asset('/images/S.png') }}";
+	}
+	if(type == 'F'){
+		return "{{ asset('/images/F.png') }}";
+	}
+	if(type == 'R'){
+		return "{{ asset('/images/R.png') }}";
+	}
+	return "{{ asset('/images/U.png') }}";
 }
 </script>
 

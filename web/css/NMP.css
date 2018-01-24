@@ -32,11 +32,35 @@ body {
     line-height: 1.5;
 }
 
-.row{
+.row {
   margin-top: 10px;
 }
 
-table{
+#customize {
+  margin-top: 20px;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: grey;
+    font-style: italic;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: grey;
+    font-style: italic;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: grey;
+    font-style: italic;
+}
+
+select {
+  margin-top: 10px;
+}
+
+table {
    width: 960px;
 }
 
@@ -44,15 +68,16 @@ table{
     border: 1px solid grey;
 }
 
-#details{
+#details {
   display: none;
+  margin-top: 10px;
 }
 
-.type0{
+.type0 {
   background-color: white;
 }
 
-.type1{
+.type1 {
   background-color: gainsboro;
 }
 
@@ -73,7 +98,7 @@ table{
   stroke-width: 31;
 }
 
-footer{
+footer {
   margin-top: 20px;
   margin-bottom: 10px;
   text-align: center;

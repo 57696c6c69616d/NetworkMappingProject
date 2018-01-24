@@ -6,12 +6,6 @@ use NMP\Domain\Packet;
 
 class PacketDAO extends DAO
 {
-    public function ListAllIp(){
-        $sql = "SELECT DISTINCT ip FROM t_address ORDER BY ip ASC";
-        $result = $this->getDb()->fetchAll($sql);
-
-        return $result;
-    }
 
     public function findAll() {
         $sql = "SELECT source,target,value FROM t_links";
@@ -35,13 +29,6 @@ class PacketDAO extends DAO
             return $this->buildDomainObject($row);
         else
             throw new \Exception("No packet matching ip " . $ip);
-    }
-
-    public function NumberOfIp(){
-        $sql = "SELECT DISTINCT COUNT(ip) FROM t_address";
-        $result = $this->getDb()->fetchAll($sql);
-
-        return $result[0];
     }
 
     public function NumberOfPackets(){

@@ -20,7 +20,9 @@ create table t_packets (
 ) engine=innodb character set utf8 collate utf8_unicode_ci;
 
 create table t_address (
-	ip varchar(15) not null primary key
+	ip varchar(15) not null primary key,
+    type varchar(1) DEFAULT 'U' not null,
+    groupe Integer(11) DEFAULT 1 not null
 ) engine=innodb character set utf8 collate utf8_unicode_ci;
 
 create table t_links (
