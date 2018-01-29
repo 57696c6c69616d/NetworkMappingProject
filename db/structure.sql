@@ -11,11 +11,12 @@ create table t_packets (
     source varchar(15) not null,
     mac_src varchar(17) not null,
     port_src varchar(5),
-    prtcl_hl varchar(5) not null,
+    prtcl_hl varchar(15) not null,
     prtcl_tl varchar(5),
     target varchar(15) not null,
     mac_dst varchar(17) not null,
     port_dst varchar(5),
+    length Integer(11) unsigned not null,
     _date datetime DEFAULT CURRENT_TIMESTAMP not null
 ) engine=innodb character set utf8 collate utf8_unicode_ci;
 
@@ -33,7 +34,7 @@ create table t_links (
 ) engine=innodb character set utf8 collate utf8_unicode_ci;
 
 #A ajouter à la main...
-#CREATE TRIGGER trigger_update_links AFTER INSERT ON t_packets FOR EACH ROW BEGIN SET @COUNT=(SELECT COUNT(*) FROM t_links WHERE (source=NEW.source AND target=NEW.target)); IF (@COUNT=0) THEN INSERT INTO t_links (source,target) VALUES(NEW.source,NEW.target); ELSE UPDATE t_links SET value=value+1 WHERE (fk_source=NEW.source AND fk_target=NEW.target); END IF; END;
+#CREATE TRIGGER trigger_update_links AFTER INSERT ON t_packets FOR EACH ROW BEGIN SET @COUNT=(SELECT COUNT(*) FROM t_links WHERE (source=NEW.source AND target=NEW.target)); IF (@COUNT=0) THEN INSERT INTO t_links (source,target) VALUES(NEW.source,NEW.target); ELSE UPDATE t_links SET value=value+1 WHERE (source=NEW.source AND target=NEW.target); END IF; END;
 CREATE TRIGGER trigger_update_ip1 AFTER INSERT ON t_packets FOR EACH ROW INSERT IGNORE INTO t_address (ip) VALUES(NEW.source);
 CREATE TRIGGER trigger_update_ip2 AFTER INSERT ON t_packets FOR EACH ROW INSERT IGNORE INTO t_address (ip) VALUES(NEW.target);
 #create table t_protocols (

@@ -15,7 +15,7 @@ class PacketDAO extends DAO
     }
 
     public function getInfo() {
-        $sql = "SELECT source,mac_src,port_src,prtcl_hl,prtcl_tl,target,mac_dst,port_dst FROM t_packets";
+        $sql = "SELECT source,mac_src,port_src,prtcl_hl,prtcl_tl,target,mac_dst,port_dst,length FROM t_packets";
         $result = $this->getDb()->fetchAll($sql);
 
         return $result;
@@ -61,6 +61,13 @@ class PacketDAO extends DAO
 
     public function LastDate(){
         $sql = "SELECT _date FROM t_packets ORDER BY id DESC LIMIT 1";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
+    public function TotalLength(){
+        $sql = "SELECT SUM(length) FROM t_packets";
         $result = $this->getDb()->fetchAll($sql);
 
         return $result[0];

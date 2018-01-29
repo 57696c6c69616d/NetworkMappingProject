@@ -24,7 +24,13 @@ $app->match('/graph', function(Request $request) use ($app) {
 
 	$nbUDPPackets = $app['dao.packet']->NumberOfUDPPackets()['COUNT(prtcl_tl)'];
 
-	$percentage = ((int)$nbUDPPackets / (int)$nbPackets)*100;
+	$totalLength = $app['dao.packet']->TotalLength()['SUM(length)'];
+
+	if((int)$nbPackets != 0) {
+		$percentage = ((int)$nbUDPPackets / (int)$nbPackets)*100;
+	}else{
+		$percentage = 0;
+	}
 
 	$first_date = $app['dao.packet']->FirstDate()['_date'];
 
@@ -73,5 +79,5 @@ $app->match('/graph', function(Request $request) use ($app) {
 		$app['session']->getFlashBag()->add('success', 'Parameters successfully submitted.');
 	}
 
-    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage, 'first_date' => $first_date, 'last_date' => $last_date, 'machineForm' => $machineForm->createView()));
+    return $app['twig']->render('graph.html.twig', array('localIP' => $localIP, 'nbIP' => $nbIP, 'nbPackets' => $nbPackets, 'nbTCPPackets' => $nbTCPPackets, 'nbUDPPackets' => $nbUDPPackets, 'percentage' => $percentage, 'first_date' => $first_date, 'last_date' => $last_date, 'totalLength' => $totalLength, 'machineForm' => $machineForm->createView()));
 })->bind('graph');

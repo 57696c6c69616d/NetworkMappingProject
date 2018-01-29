@@ -98,10 +98,14 @@
 	                	<td>Packets Captured</td>
 	                	<td>{{nbPackets}}</td>
 	                </tr>
+	                <tr class="type0">
+	                	<td>Total Length (bytes)</td>
+	                	<td>{{totalLength}}</td>
+	                </tr>
 	            </tbody>
             </table>
             <svg class="diagram" viewBox="0 0 32 32">
-  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100" />
+  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100"></circle>
 			</svg>
 			<div class="legend">
 				<svg width="20px" height="20px">
@@ -134,6 +138,8 @@
 				<th>Mac Address</th>
 				<th width="30px"/>
 				<th>Ports Destination</th>
+				<th width="30px"/>
+				<th>Total Length (bytes)</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -152,6 +158,8 @@
 				<td id="mac_dst"></td>
 				<td/>
 				<td id="port_dst"></td>
+				<td/>
+				<td id="length"></td>
 			</tr>
 		</tbody>
 	</table>
@@ -193,7 +201,8 @@ d3.json("cap/cap.json", function(error, graph) {
       .attr("mac_dst", function(d) { return d.mac_dst; })
       .attr("port_dst", function(d) { return d.port_dst; })
       .attr("prtcl_hl", function(d) { return d.prtcl_hl; })
-      .attr("prtcl_tl", function(d) { return d.prtcl_tl; });
+      .attr("prtcl_tl", function(d) { return d.prtcl_tl; })
+      .attr("length", function(d) { return d.length; });
 
   var node = svg.append("g")
       .attr("class", "nodes")
@@ -286,6 +295,7 @@ function show(ip_src){
 	var port_src = "";
 	var port_dst = "";
 	var prtcls = "";
+	var length = 0;
 	var L_target = [];
 	var L_mac_src = [];
 	var L_mac_dst = [];
@@ -337,6 +347,8 @@ function show(ip_src){
 			prtcls += "/" + v;
 		}
 		prtcls += "</p>";
+		var v = parseInt(tmp[i].getAttribute("length"));
+		length += v;
 	}
 	document.getElementById('ip_dst').innerHTML = target;
 	document.getElementById('mac_src').innerHTML = mac_src;
@@ -344,6 +356,7 @@ function show(ip_src){
 	document.getElementById('port_src').innerHTML = port_src;
 	document.getElementById('port_dst').innerHTML = port_dst;
 	document.getElementById('protocols').innerHTML = prtcls;
+	document.getElementById('length').innerHTML = length;
 }
 
 function hide(){
