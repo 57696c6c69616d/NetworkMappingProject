@@ -17,13 +17,16 @@ svg text {
 
 h1 {
 	display: block;
-	margin-left:auto;
+	margin-left: auto;
 	margin-right: auto;
 	width: 500px
 }
 
 label {
 	background-color: lightgreen;
+}
+
+#ss_btn {
 }
 
 body { 
@@ -90,6 +93,10 @@ table {
   margin-top: 20px;
   margin-left: 25px;
   margin-right: 25px;
+}
+
+#test {
+  display: none;
 }
 
 #circle1 {

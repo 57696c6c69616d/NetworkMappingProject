@@ -4,6 +4,12 @@
 
 {% block content %}
 
+{% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success" align="center">
+                {{ flashMessage }}
+            </div>
+{% endfor %}
+
 <!-- Affiche Adresse IP -->
 <div align = "center"> 
 	Votre IP locale est {{localIP}}.
@@ -55,11 +61,6 @@
 	            </div>
 	        </div>
 	    {{ form_end(machineForm) }}
-        {% for flashMessage in app.session.flashbag.get('success') %}
-            <div class="alert alert-success">
-                {{ flashMessage }}
-            </div>
-        {% endfor %}
     {% endif %}
 	</div>
 
@@ -104,18 +105,20 @@
 	                </tr>
 	            </tbody>
             </table>
-            <svg class="diagram" viewBox="0 0 32 32">
-  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100"></circle>
-			</svg>
-			<div class="legend">
-				<svg width="20px" height="20px">
-					<circle fill="blue" r="5" cx="10" cy="15" />
+            <div id="screenshot_container">
+	            <svg class="diagram" viewBox="0 0 32 32">
+	  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100"></circle>
 				</svg>
-				<span>TCP</span>
-				<svg width="20px" height="20px">
-					<circle fill="orange" r="5" cx="10" cy="15" />
-				</svg>
-				<span>UDP</span>
+				<div class="legend">
+					<svg width="20px" height="20px">
+						<circle fill="blue" r="5" cx="10" cy="15" />
+					</svg>
+					<span>TCP</span>
+					<svg width="20px" height="20px">
+						<circle fill="orange" r="5" cx="10" cy="15" />
+					</svg>
+					<span>UDP</span>
+				</div>
 			</div>
         </div>
 	</div>
@@ -165,7 +168,17 @@
 	</table>
 </div>
 
+
 <script type="text/javascript">
+
+loadGraph();
+setInterval(function() {
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.open('GET', "{{ path('data') }}", true);
+	xmlhttp.send();
+	d3.selectAll("svg > *").remove();
+	loadGraph();
+}, 10000);
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
@@ -178,6 +191,7 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 2, height / 2));
 
+function loadGraph() {
 d3.json("cap/cap.json", function(error, graph) {
   if (error) throw error;
 
@@ -187,7 +201,7 @@ d3.json("cap/cap.json", function(error, graph) {
     .data(graph.links)
     .enter().append("line")
       .attr("stroke-width", function(d) { return Math.log(d.value)+1; })
-      .attr("stroke", function(d) { return color(d.value); });
+      .attr("stroke", function(d) { return "#999"; });
 
   var info = svg.append("g")
   	  .attr("class", "info")
@@ -264,6 +278,7 @@ d3.json("cap/cap.json", function(error, graph) {
         .attr("y", function(d) { return d.y+25; });
   }
 });
+}
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
