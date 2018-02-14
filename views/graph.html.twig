@@ -27,7 +27,11 @@
 
 <div class="tab-content" align="center">
 	<div class="tab-pane active" id="graph">
-		<svg width="960" height="600"></svg><br/>
+		<div id="filter" style="margin-top: 20px; margin-bottom: 20px; display: block;">
+			IP Address : <input id="filtertext" type="text" placeholder="ex: 192.168.1.1" value=""/>
+			<input type="button" class="btn btn-primary" id="filterbutton" onclick="display();" style="margin-top: -5px; margin-left: 10px;" value="Filter"/>
+		</div>
+		<svg id="drawing" width="960" height="600"></svg><br/>
 		<image src="{{ asset('/images/U.png') }}" height="20px" width="20px"> Unknown </image>
 		<image src="{{ asset('/images/C.png') }}" height="20px" width="20px"> Client </image>
 		<image src="{{ asset('/images/F.png') }}" height="20px" width="20px"> Firewall </image>
@@ -61,6 +65,32 @@
 	            </div>
 	        </div>
 	    {{ form_end(machineForm) }}
+    {% endif %}
+    {% if machineForm2 %}
+        {{ form_start(machineForm2) }}
+			<div class="form-group">
+				<div>IP Address : 
+					{{ form_errors(machineForm2.ip) }}
+					{{ form_widget(machineForm2.ip, { 'attr':  {
+						'placeholder': 'ex: 192.168.1.1',
+						'value': ''
+					}}) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div>Group :
+					{{ form_errors(machineForm2.groupe) }}
+					{{ form_widget(machineForm2.groupe, { 'attr':  {
+						'rows': '1'
+					}}) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<div>
+	            	<input type="submit" class="btn btn-primary" value="Submit" />
+	            </div>
+	        </div>
+	    {{ form_end(machineForm2) }}
     {% endif %}
 	</div>
 
@@ -105,20 +135,18 @@
 	                </tr>
 	            </tbody>
             </table>
-            <div id="screenshot_container">
-	            <svg class="diagram" viewBox="0 0 32 32">
-	  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100"></circle>
+            <svg class="diagram" viewBox="0 0 32 32">
+  				<circle id="circle1" r="16" cx="16" cy="16" stroke-dasharray="{{percentage}} 100"></circle>
+			</svg>
+			<div class="legend">
+				<svg width="20px" height="20px">
+					<circle fill="blue" r="5" cx="10" cy="15" />
 				</svg>
-				<div class="legend">
-					<svg width="20px" height="20px">
-						<circle fill="blue" r="5" cx="10" cy="15" />
-					</svg>
-					<span>TCP</span>
-					<svg width="20px" height="20px">
-						<circle fill="orange" r="5" cx="10" cy="15" />
-					</svg>
-					<span>UDP</span>
-				</div>
+				<span>TCP</span>
+				<svg width="20px" height="20px">
+					<circle fill="orange" r="5" cx="10" cy="15" />
+				</svg>
+				<span>UDP</span>
 			</div>
         </div>
 	</div>
@@ -178,20 +206,48 @@ setInterval(function() {
 	xmlhttp.send();
 	d3.selectAll("svg > *").remove();
 	loadGraph();
-}, 10000);
+}, 60000);
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
+
+function loadGraph() {
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.ip; }))
     .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("x", d3.forceX(function(d){
+    	var grid = {
+    		"1": { "1": width/2 },
+    		"2": { "1": width/4, "2": 3*width/4},
+    		"3": { "1": width/4, "2": 3*width/4, "3": width/4},
+    		"4": { "1": width/4, "2": 3*width/4, "3": width/4, "4": 3*width/4},
+    		"5": { "1": width/4, "2": 3*width/4, "3": width/4, "4": 3*width/4, "5": width/4},
+    		"6": { "1": width/4, "2": 3*width/4, "3": width/4, "4": 3*width/4, "5": width/4, "6": 3*width/4},
+    		"7": { "1": 3*width/6, "2": width/6, "3": 3*width/6, "4": 5*width/6, "5": 5*width/6, "6": 5*width/6, "7": 3*width/6},
+    		"8": { "1": 3*width/6, "2": width/6, "3": 3*width/6, "4": 5*width/6, "5": 5*width/6, "6": 5*width/6, "7": 3*width/6, "8": width/6},
+    		"9": { "1": 3*width/6, "2": width/6, "3": 3*width/6, "4": 5*width/6, "5": 5*width/6, "6": 5*width/6, "7": 3*width/6, "8": width/6, "9": width/6}
+    	};
+    	return grid[{{ nbGroups }}][d.groupe];
+    }))
+    .force("y", d3.forceY(function(d){
+    	var grid = {
+    		"1": { "1": height/2 },
+    		"2": { "1": height/2, "2": height/2},
+    		"3": { "1": height/4, "2": height/4, "3": 3*height/4},
+    		"4": { "1": height/4, "2": height/4, "3": 3*height/4, "4": 3*height/4},
+    		"5": { "1": 3*height/6, "2": height/6, "3": height/6, "4": 3*height/6, "5": 5*height/6},
+    		"6": { "1": 3*height/6, "2": height/6, "3": height/6, "4": 3*height/6, "5": 5*height/6, "6": 5*height/6},
+    		"7": { "1": 3*width/6, "2": width/6, "3": 3*width/6, "4": 5*width/6, "5": 5*width/6, "6": 5*width/6, "7": 3*width/6},
+    		"8": { "1": 3*width/6, "2": width/6, "3": 3*width/6, "4": 5*width/6, "5": 5*width/6, "6": 5*width/6, "7": 3*width/6, "8": width/6},
+    		"9": { "1": 3*height/6, "2": height/6, "3": height/6, "4": height/6, "5": 3*width/6, "6": 5*width/6, "7": 5*height/6, "8": 5*height/6, "9": 3*height/6}
+    	};
+    	return grid[{{ nbGroups }}][d.groupe];
+    }));
 
-function loadGraph() {
 d3.json("cap/cap.json", function(error, graph) {
   if (error) throw error;
 
@@ -201,7 +257,9 @@ d3.json("cap/cap.json", function(error, graph) {
     .data(graph.links)
     .enter().append("line")
       .attr("stroke-width", function(d) { return Math.log(d.value)+1; })
-      .attr("stroke", function(d) { return "#999"; });
+      .attr("stroke", function(d) { return color(Math.log(d.value)+1); })
+      .attr("source", function(d) { return d.source; })
+      .attr("target", function(d) { return d.target; });
 
   var info = svg.append("g")
   	  .attr("class", "info")
@@ -256,7 +314,7 @@ d3.json("cap/cap.json", function(error, graph) {
 
   simulation.force("link")
       .links(graph.links)
-      .distance(function(d) {return 20;}).strength(0.01);
+      .distance(function(d) { return 20; }).strength(0.01);
 
   function ticked() {
     link
@@ -278,7 +336,6 @@ d3.json("cap/cap.json", function(error, graph) {
         .attr("y", function(d) { return d.y+25; });
   }
 });
-}
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -296,6 +353,7 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+}
 
 function show(ip_src){
 	if(document.getElementById("details").style.display == 'none'){
@@ -304,6 +362,19 @@ function show(ip_src){
 	document.getElementById("ip_src").innerHTML = ip_src;
 
 	var tmp = document.getElementsByClassName(ip_src);
+
+	var json_data = function () {
+		var jsonTemp = null;
+		$.ajax({
+			'async': false,
+			'url': "security/ports.json",
+			'success': function (data) {
+				jsonTemp = data;
+			}
+		});
+		return jsonTemp;
+	}();
+
 	var target = "";
 	var mac_src = "";
 	var mac_dst = "";
@@ -341,13 +412,23 @@ function show(ip_src){
 		if(L_port_src.indexOf(v) < 0 )
 		{
 			L_port_src.push(v);
-			port_src += v + "</br>";
+			if(v in json_data)
+			{
+				port_src += "<b><a href='' title='" + json_data[v] + "' style='color: red;'>" + v + "</a></b></br>";
+			}else{
+				port_src += v + "</br>";
+			}
 		}
 		var v = tmp[i].getAttribute("port_dst");
 		if(L_port_dst.indexOf(v) < 0 )
 		{
 			L_port_dst.push(v);
-			port_dst += v + "</br>";
+			if(v in json_data)
+			{
+				port_dst += "<b><a href='' title='" + json_data[v] + "' style='color: red;'>" + v + "</a></b></br>";
+			}else{
+				port_dst += v + "</br>";
+			}
 		}
 		var v = tmp[i].getAttribute("prtcl_hl");
 		if(L_prtcls.indexOf(v) < 0 )
@@ -392,6 +473,75 @@ function image(type){
 		return "{{ asset('/images/R.png') }}";
 	}
 	return "{{ asset('/images/U.png') }}";
+}
+
+function getAllElementsWithAttribute(attribute)
+{
+  var matchingElements = [];
+  var allElements = document.getElementsByTagName('*');
+  for (var i = 0, n = allElements.length; i < n; i++)
+  {
+    if (allElements[i].getAttribute(attribute) !== null)
+    {
+      // Element exists with attribute. Add to array.
+      matchingElements.push(allElements[i]);
+    }
+  }
+  return matchingElements;
+}
+
+function display() {
+	var ip = document.getElementById("filtertext").value;
+	console.log(ip);
+	var List_Img = document.getElementById("drawing").getElementsByTagName("image");
+	var List_Lines = document.getElementsByTagName("line");
+	var List_Text = document.getElementsByTagName("text");
+	var L_tmp = [];
+	for (var i = 0; i < List_Lines.length; i++ )
+	{
+		if((List_Lines[i].getAttribute('source') != ip) && (List_Lines[i].getAttribute('target') != ip))
+		{
+			List_Lines[i].style.display = 'none';
+		}else{
+			List_Lines[i].style.display = 'inline';
+			if(!L_tmp.includes(List_Lines[i].getAttribute('source'))){
+				L_tmp.push(List_Lines[i].getAttribute('source'));
+			}
+			if(!L_tmp.includes(List_Lines[i].getAttribute('target'))){
+				L_tmp.push(List_Lines[i].getAttribute('target'));
+			}
+		}
+		if(ip == '')
+		{
+			List_Lines[i].style.display = 'inline';
+		}
+	}
+	for (var i = 0; i < List_Img.length; i++ )
+	{
+		if(!L_tmp.includes(List_Img[i].id))
+		{
+			List_Img[i].style.display = 'none';
+		}else{
+			List_Img[i].style.display = 'inline';
+		}
+		if(ip == '')
+		{
+			List_Img[i].style.display = 'inline';
+		}
+	}
+	for (var i = 0; i < List_Text.length; i++ )
+	{
+		if(!L_tmp.includes(List_Text[i].innerHTML))
+		{
+			List_Text[i].style.display = 'none';
+		}else{
+			List_Text[i].style.display = 'inline';
+		}
+		if(ip == '')
+		{
+			List_Text[i].style.display = 'inline';
+		}
+	}
 }
 </script>
 

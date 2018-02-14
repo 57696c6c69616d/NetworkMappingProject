@@ -95,10 +95,6 @@ table {
   margin-right: 25px;
 }
 
-#test {
-  display: none;
-}
-
 #circle1 {
   fill: blue;
   stroke: orange;

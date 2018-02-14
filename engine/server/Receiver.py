@@ -1,11 +1,17 @@
-import socket, mysql.connector, config
+import socket, mysql.connector, time, datetime, config
 import sys
 from thread import *
+from Crypto.Cipher import AES
 
 #Parameters
 TCP_IP = config.ip
 TCP_PORT = config.port
-BUFFER_SIZE = 94
+BUFFER_SIZE = 96
+
+#Cipher
+key = config.key
+iv = config.iv
+obj = AES.new(key, AES.MODE_CBC, iv)
 
 #Connection to the Database
 sql_conn = mysql.connector.connect(host="localhost",user="nmp_user",password="nmp_pa55", database="nmpdb")
@@ -23,8 +29,14 @@ def clientthread(conn):
     while True:
          
         #Receiving from client
-        data = conn.recv(BUFFER_SIZE)
+        encrypted_data = conn.recv(BUFFER_SIZE)
+        data = obj.decrypt(encrypted_data)
         print("Data received: %s", data)
+        MESSAGE = data
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        logtext = "[" + st + "] " + MESSAGE + "\n"
+        log.write(logtext)
 
         if not data: break
         
@@ -39,12 +51,18 @@ def clientthread(conn):
     #came out of loop
     conn.close()
 
-while 1:
-	conn, addr = s.accept()
-	print 'Connection address:', addr
-	
-	#start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
-	start_new_thread(clientthread ,(conn,))
+with open("log.txt", "a") as log:
+    while 1:
+    	conn, addr = s.accept()
+    	print 'Connection address:', addr
+        MESSAGE = 'Connection of ' + str(addr)
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        logtext = "[" + st + "] " + MESSAGE + "\n"
+        log.write(logtext)
+    	
+    	#start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
+    	start_new_thread(clientthread ,(conn,))
 
 conn.close()
 

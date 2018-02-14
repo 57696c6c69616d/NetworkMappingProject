@@ -1,10 +1,16 @@
-import os, pyshark, socket, config
+import os, pyshark, socket, time, datetime, config
+from Crypto.Cipher import AES
 
 #Parameters
 TCP_IP = config.ip
 INTERFACE = config.interface
 TCP_PORT = config.port
-BUFFER_SIZE = 94
+BUFFER_SIZE = 96
+
+#Cipher
+key = config.key
+iv = config.iv
+obj = AES.new(key, AES.MODE_CBC, iv)
 
 #Connection to the Server
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -67,14 +73,21 @@ def packet_captured(packet):
             fill += "x"
         MESSAGE += fill
 
-    s.send(MESSAGE)
+    ciphertext = obj.encrypt(MESSAGE)
+    s.send(ciphertext)
+    print(ciphertext)
     print("Message sent: %s", MESSAGE)
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    logtext = "[" + st + "] " + MESSAGE + "\n"
+    log.write(logtext)
 
-capture = pyshark.LiveCapture(interface=INTERFACE)
-for packet in capture.sniff_continuously():
-    try:
-        capture.apply_on_packets(packet_captured)
-    except AttributeError as e:
-        pass
+with open("log.txt", "a") as log:
+    capture = pyshark.LiveCapture(interface=INTERFACE)
+    for packet in capture.sniff_continuously():
+        try:
+            capture.apply_on_packets(packet_captured)
+        except AttributeError as e:
+            pass
 
 s.close()

@@ -6,7 +6,7 @@ class Machine
 {
     private $ip;
     private $type;
-    private $group;
+    private $groupe;
 
     public function getIp() {
         return $this->ip;
@@ -26,12 +26,12 @@ class Machine
         return $this;
     }
 
-    public function getGroup() {
-        return $this->group;
+    public function getGroupe() {
+        return $this->groupe;
     }
 
-    public function setGroup($group) {
-        $this->group = $group;
+    public function setGroupe($groupe) {
+        $this->groupe = $groupe;
         return $this;
     }
 }

@@ -30,9 +30,23 @@ class MachineDAO extends DAO
         return $result[0];
     }
 
+    public function NumberOfGroups(){
+        $sql = "SELECT COUNT(DISTINCT groupe) FROM t_address";
+        $result = $this->getDb()->fetchAll($sql);
+
+        return $result[0];
+    }
+
     public function save(Machine $machine){
         $machineData = array(
             'type' => $machine->getType()
+            );
+        $this->getDb()->update('t_address', $machineData, array('ip' => $machine->getIp()));
+    }
+
+    public function save2(Machine $machine){
+        $machineData = array(
+            'groupe' => $machine->getGroupe()
             );
         $this->getDb()->update('t_address', $machineData, array('ip' => $machine->getIp()));
     }
@@ -41,7 +55,7 @@ class MachineDAO extends DAO
         $machine = new Machine();
         $machine->setIp($row['ip']);
         $machine->setType($row['type']);
-        $machine->setGroup($row['groupe']);
+        $machine->setGroupe($row['groupe']);
         return $machine;
     }
 }
